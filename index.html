@@ -225,30 +225,34 @@
         var successCount = getSuccessCount();
         console.log("getTimeoutNUmber success count", successCount);
 
-        if(successCount > 120) {
+        if(successCount > 150) {
             return 500;
         }
 
-        if(successCount > 80) {
+        if(successCount > 120) {
             return 1000;
         }
 
-
-        if(successCount > 50) {
+        if(successCount > 80) {
             return 1500;
         }
 
 
-        if(successCount > 30) {
+        if(successCount > 50) {
             return 2000;
         }
 
 
-        if(successCount > 10) {
-            return 2500;
+        if(successCount > 30) {
+            return 3000;
         }
 
-        return 3000;
+
+        if(successCount > 10) {
+            return 400;
+        }
+
+        return 5000;
     }
     
 
