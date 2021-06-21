@@ -19,6 +19,15 @@
     .info-box > span {
         margin-right: 100px;
     }
+    .debug-box{
+        top: 0; 
+        right: 0;
+        position: absolute;
+        color: gray;
+        font-size: 11px;
+        text-align: right;
+        margin: 2px;
+    }
 
     body{
         margin: 0;
@@ -46,6 +55,12 @@
         <div class="info-box">
             <span class="failed">0</span>
             <span class="success">0</span>
+        </div>
+        <div class="debug-box">
+            Duration: <span class="duration"></span> <br/>
+            Timeout: <span class="timeout"></span> <br/>
+            Pressed key: <span class="keychar">&nbsp;</span> <br/>
+            Pressed keyc code: <span class="keycode">&nbsp;</span>
         </div>
     </div>
     
@@ -90,7 +105,7 @@
         });
         e.append(c);
 
-        e.attr('success', false)
+        e.attr('success', 'no')
 
         return e;
     }
@@ -190,77 +205,62 @@
     
 
     function whenKeyPress(e){
-        var keyChar = String.fromCharCode(event.which);
+        var keyChar = String.fromCharCode(e.which).toLowerCase();
         var circles = $('#container').find('div[data="'+keyChar+'"]');
-        circles.css({'background-color': '#13e84b'});
+        //circles.css({'background-color': '#13e84b'});
 
         if(circles.length > 0){ //Update success
-            $('.success').html(parseInt($('.success').html()) + circles.length);
-            circles.attr('success', 'yes');
+            circles.each(function(index, item){
+                var success = $(item).attr('success');
+                if(success != 'yes'){
+                    $(item).css({'background-color': '#13e84b'});
+                    $(item).attr('success', 'yes');
+                    $('.success').html(parseInt($('.success').html()) + circles.length);                    
+                }
+            });
+        } else {
+            //Should be punished
+            var s = getSuccessCount();
+            s = s > 0 ? s -1 : 0;
+            $('.success').html(s);
+            $('.failed').html(getFailedCount() + 1);
         }
     }
 
     function getSuccessCount(){
-        return parseInt($('.success').html());
+        var s =  parseInt($('.success').html());
+        return s;
     }
 
     function getFailedCount(){
-        return parseInt($('.failed').html());
+        var f =  parseInt($('.failed').html());
+        return f;
     }
 
+    const LEVEL_STEP = 100; //points 
     function getDuration(){
         //Depend on level
         var successCount = getSuccessCount();
-        if(successCount > 100){
-            return 10000;
-        }
-        if(successCount > 50){
-            return 13000;
-        }
-
-        //Don't go too fast, it will be hard to read
-
-        return 15000;
+        var s = parseInt(successCount/LEVEL_STEP) * 500;
+        
+        var d = 15000;
+        var ds = d-s;
+        ds = ds >= 10000 ? ds: 10000; //10000 - 15000
+        
+        return ds;
     }
 
     function getTimeoutNumber(){
         //Depend on level
         var successCount = getSuccessCount();
-        console.log("getTimeoutNUmber success count", successCount);
+        //console.log("getTimeoutNUmber success count", successCount);
 
+        var t = 6000;
+        var s = parseInt(successCount/LEVEL_STEP) * 500;
+        var ts = t -s ;
+        ts = ts >= 500 ? ts : 500; //500 - 6000, step 500ms reduce each 100 point
 
-        if(successCount > 180) {
-            return 500;
-        }
-
-        if(successCount > 150) {
-            return 1000;
-        }
-
-        if(successCount > 120) {
-            return 2000;
-        }
-
-        if(successCount > 80) {
-            return 3000;
-        }
-
-
-        if(successCount > 50) {
-            return 4000;
-        }
-
-
-        if(successCount > 30) {
-            return 5000;
-        }
-
-
-        if(successCount > 10) {
-            return 6000;
-        }
-
-        return 7000;
+        return ts;
     }
     
 
@@ -270,18 +270,27 @@
         createRunningCircle(getDuration());
         continueCreateCircle();
         function continueCreateCircle(){
-            console.log("Duration: ", getDuration());
-            console.log("Timeout number: ", getTimeoutNumber());
+            var d = getDuration();
+            var t = getTimeoutNumber();
             setTimeout(function(){
-                createRunningCircle(getDuration());
+                createRunningCircle(d);
                 continueCreateCircle();
-            }, getTimeoutNumber());
+            }, t);
+
+            //Update debug box
+            $('.duration').html(d);
+            $('.timeout').html(t);
         }
 
         //Process keypress
-        $(document).keypress(function(e){
+        $(document).keyup(function(e){
             whenKeyPress(e);
-            e.preventDefault()
+            e.preventDefault();
+
+            //Update debug box 
+            var keyChar = String.fromCharCode(e.which);
+            $('.keychar').html(keyChar);
+            $('.keycode').html(e.which);
         });
     });
 </script>
