@@ -211,11 +211,11 @@
     function getDuration(){
         //Depend on level
         var successCount = getSuccessCount();
-        if(successCount > 50){
-            return 20000;
+        if(successCount > 100){
+            return 10000;
         }
-        if(successCount > 20){
-            return 12000;
+        if(successCount > 50){
+            return 13000;
         }
 
         //Don't go too fast, it will be hard to read
@@ -228,34 +228,39 @@
         var successCount = getSuccessCount();
         console.log("getTimeoutNUmber success count", successCount);
 
-        if(successCount > 150) {
+
+        if(successCount > 180) {
             return 500;
         }
 
-        if(successCount > 120) {
+        if(successCount > 150) {
             return 1000;
         }
 
-        if(successCount > 80) {
-            return 1500;
-        }
-
-
-        if(successCount > 50) {
+        if(successCount > 120) {
             return 2000;
         }
 
-
-        if(successCount > 30) {
+        if(successCount > 80) {
             return 3000;
         }
 
 
-        if(successCount > 10) {
+        if(successCount > 50) {
             return 4000;
         }
 
-        return 5000;
+
+        if(successCount > 30) {
+            return 5000;
+        }
+
+
+        if(successCount > 10) {
+            return 6000;
+        }
+
+        return 7000;
     }
     
 
@@ -276,6 +281,7 @@
         //Process keypress
         $(document).keypress(function(e){
             whenKeyPress(e);
+            e.preventDefault()
         });
     });
 </script>
