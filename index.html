@@ -223,31 +223,30 @@
     function getTimeoutNumber(){
         //Depend on level
         var successCount = getSuccessCount();
+        console.log("getTimeoutNUmber success count", successCount);
 
+        if(successCount > 120) {
+            return 500;
+        }
 
-        if(successCount > 100) {
+        if(successCount > 80) {
             return 1000;
         }
 
 
-        if(successCount > 70) {
+        if(successCount > 50) {
             return 1500;
         }
 
 
-        if(successCount > 40) {
+        if(successCount > 30) {
             return 2000;
         }
 
-        
-        if(successCount > 20) {
+
+        if(successCount > 10) {
             return 2500;
         }
-
-        
-
-
-        
 
         return 3000;
     }
