@@ -212,12 +212,15 @@
         //Depend on level
         var successCount = getSuccessCount();
         if(successCount > 50){
-            return 10000;
+            return 20000;
+        }
+        if(successCount > 20){
+            return 12000;
         }
 
         //Don't go too fast, it will be hard to read
 
-        return 12000;
+        return 15000;
     }
 
     function getTimeoutNumber(){
@@ -249,7 +252,7 @@
 
 
         if(successCount > 10) {
-            return 400;
+            return 4000;
         }
 
         return 5000;
