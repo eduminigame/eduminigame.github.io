@@ -49,6 +49,18 @@
     .failed {
         color: red;
     }
+
+    .icon {
+        position: relative;
+        height: 200px;
+        width: 200px;
+        margin: auto;
+        margin-top: 20%;
+    }
+    .icon > img {
+        width: 200px;
+        height: 200px;
+    }
 </style>
 <body>
     <div id="container">
@@ -61,6 +73,9 @@
             Timeout: <span class="timeout"></span> <br/>
             Pressed key: <span class="keychar">&nbsp;</span> <br/>
             Pressed keyc code: <span class="keycode">&nbsp;</span>
+        </div>
+        <div class="icon" style="display: none;">
+            <img src="img/lose-1.png"/>
         </div>
     </div>
     
@@ -234,6 +249,9 @@
 
     function getFailedCount(){
         var f =  parseInt($('.failed').html());
+        if(f >= LIMIT_FAIL){ //Not the best place but normally this called every time the score is changed
+            onLimitFail();
+        }
         return f;
     }
 
@@ -263,7 +281,12 @@
         return ts;
     }
     
+    const LIMIT_FAIL = 2;
 
+    function onLimitFail(){
+        $('.icon').show();
+        $('.circle').remove();
+    }
     $(document).ready(function() {
         //Start a game 
 
@@ -273,8 +296,11 @@
             var d = getDuration();
             var t = getTimeoutNumber();
             setTimeout(function(){
-                createRunningCircle(d);
-                continueCreateCircle();
+                //Check fail 
+                if(getFailedCount() < LIMIT_FAIL ){
+                    createRunningCircle(d);
+                    continueCreateCircle();
+                }
             }, t);
 
             //Update debug box
@@ -284,13 +310,15 @@
 
         //Process keypress
         $(document).keyup(function(e){
-            whenKeyPress(e);
-            e.preventDefault();
+            if(getFailedCount() < LIMIT_FAIL){
+                whenKeyPress(e);
+                e.preventDefault();
 
-            //Update debug box 
-            var keyChar = String.fromCharCode(e.which);
-            $('.keychar').html(keyChar);
-            $('.keycode').html(e.which);
+                //Update debug box 
+                var keyChar = String.fromCharCode(e.which);
+                $('.keychar').html(keyChar);
+                $('.keycode').html(e.which);
+            }
         });
     });
 </script>
