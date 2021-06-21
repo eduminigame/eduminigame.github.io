@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+</script>
+<title>Little Game - Practicing Keyboard</title>
+</head>
+<style>
+    #container{
+        top: 0px; 
+        bottom: 0px;
+        width: 100%;
+        min-height: 400px;
+        background-color: black;
+        position: absolute;
+    }
+
+    .info-box > span {
+        margin-right: 100px;
+    }
+
+    body{
+        margin: 0;
+        padding: 0;
+    }
+
+    .info-box {
+        padding: 10px
+    }
+    .success, .failed {
+        font-size: 80px;
+        font-weight: bold;
+    }
+
+    .success{
+        color: #13e84b;
+    }
+
+    .failed {
+        color: red;
+    }
+</style>
+<body>
+    <div id="container">
+        <div class="info-box">
+            <span class="failed">0</span>
+            <span class="success">0</span>
+        </div>
+    </div>
+    
+
+
+
+<!-- <div style="padding:20px;"> <button id="moveleft">Move Left</button>  <button id="moveright">Move right</button> <button id="movedown">Move Down</button> <button id="moveup">Move Up</button></div>
+<div id="textbox" style="position:absolute;padding:10px;background:#FFFFCC;width:300px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec tincidunt purus. Donec eleifend libero in orci mattis pulvinar. Ut et felis eu leo malesuada eleifend. Ut sit amet odio eu ipsum rutrum consequat. Aliquam congue ultricies sagittis.</div> -->
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+
+    function createCircle(content, size, color, top, left){
+        content = typeof content == 'undefined' || content == null ? '' : content;
+        size = typeof size == 'undefined' || size == null ? '100px' : size;
+        color = typeof  color == 'undefined' || color == null ? 'aqua' : color;
+
+        top = typeof top == 'undefined' || top == null ? '0px' : top
+        left = typeof left == 'undefined' || left == null ? '0px' : left
+
+        radius = parseInt(parseInt(size)/2);
+
+        var e = $('<div class="circle"></div>');
+        e.css({
+            'width': size,
+            'height': size, 
+            'position': 'absolute',
+            'background-color': color,
+            'top': top,
+            'left': left, 
+            'border-radius': radius + 'px',
+            'text-align': 'center', 
+            'text-transform': 'uppercase'
+        });
+
+        //Circle content
+        var c = $('<span>' + content + '</span>');
+        c.css({
+            'font-size' : radius,
+            'line-height': size
+        });
+        e.append(c);
+
+        e.attr('success', false)
+
+        return e;
+    }
+
+    //Helper
+    function randomInRange(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min)
+    }
+
+    function createRandomCircleOnTop(content, size, color){
+        size = typeof size == 'undefined' || size == null ? '100px' : size;
+        sizeInt = parseInt(size);
+
+        var container = $('#container');
+        var cw = container.width();
+        var ch = container.height();
+        var top = 0 - sizeInt;
+        var left = randomInRange(0, cw-sizeInt);
+        
+        return createCircle(content, size, color, top + 'px', left + 'px');
+    }
+
+
+    function createRandomCircleFromLeft(content, size, color){
+        size = typeof size == 'undefined' || size == null ? '100px' : size;
+        sizeInt = parseInt(size);
+
+        var container = $('#container');
+        var cw = container.width();
+        var ch = container.height();
+        var top = randomInRange(0, ch - sizeInt);
+        var left = 0 - sizeInt;
+        //console.log(top, left);
+        
+        return createCircle(content, size, color, top + 'px', left + 'px');
+    }
+
+
+    var charMap = {
+            a: null,  b: null, c: null,  d: null, e: null, f: null, g: null, i: null, k: null, l: null, 
+            m: null, o: null, p: null, q: null, r: null, s: null, t: null, u: null, v: null, w: null, 
+            x: null, y: null, z: null,
+            1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+
+        }
+
+    function createRunningCircle(duration){
+        duration = typeof duration == 'undefined' || duration == null ? 10000 : duration;
+
+        var keys = Object.keys(charMap);
+        var char = keys[randomInRange(0, keys.length -1)];
+        
+        //var e = createRandomCircleOnTop(char);
+        var e = createRandomCircleFromLeft(char);
+
+        e.attr('data', char);
+        $('#container').append(e);
+
+        //How to make sure only one instance of thing is there
+        var toBottom = $('#container').height() + 100; //Plus size
+        var toRight = $('#container').width() + 100;
+        e.animate({
+            //'top': '+=' + toBottom
+            'left' : '+=' + toRight
+        }, {
+            duration: duration,
+            progress: function(a, p, c){
+                var progress = parseInt(p*100);
+                //TODO animate background color
+                if(progress == 60){
+                    if(e.attr('success') != 'yes')
+                        e.css({
+                            'background-color' : 'yellow'
+                        })
+                }
+                if(progress == 70){
+                    if(e.attr('success') != 'yes')
+                        e.css({
+                            'background-color' : 'orange'
+                        })
+                }
+
+                if(progress == 80){
+                    if(e.attr('success') != 'yes')
+                        e.css({
+                            'background-color' : 'red'
+                        })
+                }
+                if(p >= 1){
+                    e.remove();
+                    if(e.attr('success') != 'yes')
+                        $('.failed').html(parseInt($('.failed').html()) + 1)
+                }
+            }
+        })
+    }
+    
+
+    function whenKeyPress(e){
+        var keyChar = String.fromCharCode(event.which);
+        var circles = $('#container').find('div[data="'+keyChar+'"]');
+        circles.css({'background-color': '#13e84b'});
+
+        if(circles.length > 0){ //Update success
+            $('.success').html(parseInt($('.success').html()) + circles.length);
+            circles.attr('success', 'yes');
+        }
+    }
+
+    function getSuccessCount(){
+        return parseInt($('.success').html());
+    }
+
+    function getFailedCount(){
+        return parseInt($('.failed').html());
+    }
+
+    function getDuration(){
+        //Depend on level
+        var successCount = getSuccessCount();
+        if(successCount > 50){
+            return 10000;
+        }
+
+        //Don't go too fast, it will be hard to read
+
+        return 12000;
+    }
+
+    function getTimeoutNumber(){
+        //Depend on level
+        var successCount = getSuccessCount();
+
+        if(successCount > 20) {
+            return 2500;
+        }
+
+        if(successCount > 40) {
+            return 2000;
+        }
+
+        if(successCount > 70) {
+            return 1500;
+        }
+
+        if(successCount > 100) {
+            return 1000;
+        }
+
+        return 3000;
+    }
+    
+
+    $(document).ready(function() {
+        //Start a game 
+
+        createRunningCircle(getDuration());
+        continueCreateCircle();
+        function continueCreateCircle(){
+            console.log("Duration: ", getDuration());
+            console.log("Timeout number: ", getTimeoutNumber());
+            setTimeout(function(){
+                createRunningCircle(getDuration());
+                continueCreateCircle();
+            }, getTimeoutNumber());
+        }
+
+        //Process keypress
+        $(document).keypress(function(e){
+            whenKeyPress(e);
+        });
+    });
+</script>
+</body>
+</html>
