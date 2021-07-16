@@ -257,7 +257,7 @@
 
     var initLevel = window.location.search.replace("?level=", "").trim();
     initLevel = parseInt(initLevel);
-    initLevel = typeof initLevel == "number" ? initLevel : 0;
+    initLevel = !Number.isNaN(initLevel) ? initLevel : 0;
 
     var successCount = getSuccessCount();
     var successCountAdd = initLevel * 50;
