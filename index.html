@@ -255,38 +255,65 @@
         return f;
     }
 
-    var LEVEL_STEP = 100; //points 
+    var initLevel = window.location.search.replace("?level=", "").trim();
+    initLevel = parseInt(initLevel);
+    initLevel = typeof initLevel == "number" ? initLevel : 0;
+
+    var successCount = getSuccessCount();
+    var successCountAdd = initLevel * 50;
+    var totalCount = successCount + successCountAdd;
+
+    var LEVEL_STEP = 80; //points 
     function getDuration(){
         //Depend on level
-        var successCount = getSuccessCount();
-        if(parseInt(successCount/50) > 4){
-            LEVEL_STEP=10
+        
+        if(parseInt(totalCount/50) > 1){
+            LEVEL_STEP=70
         }
-        if(parseInt(successCount/50) > 3){
-            LEVEL_STEP=20
+        if(parseInt(totalCount/50) > 2){
+            LEVEL_STEP=60
         }
-        if(parseInt(successCount/50) > 2){
-            LEVEL_STEP=30
+        if(parseInt(totalCount/50) > 3){
+            LEVEL_STEP=50
         }
-        if(parseInt(successCount/50) > 1){
+        if(parseInt(totalCount/50) > 4){
             LEVEL_STEP=40
         }
-        var s = parseInt(successCount/LEVEL_STEP) * 500;
+        if(parseInt(totalCount/50) > 5){
+            LEVEL_STEP=35
+        }
+        if(parseInt(totalCount/50) > 6){
+            LEVEL_STEP=30
+        }
+        if(parseInt(totalCount/50) > 7){
+            LEVEL_STEP=25
+        }
+        if(parseInt(totalCount/50) > 8){
+            LEVEL_STEP=20
+        }
+
+        if(parseInt(totalCount/50) > 9){
+            LEVEL_STEP=15
+        }
+
+        if(parseInt(totalCount/50) > 10){
+            LEVEL_STEP=10
+        }
+
+        
+        var s = parseInt(totalCount/LEVEL_STEP) * 300;
         
         var d = 15000;
         var ds = d-s;
-        ds = ds >= 10000 ? ds: 10000; //10000 - 15000
+        ds = ds >= 8000 ? ds: 8000; //8000 - 15000
         
+        console.log("duration: " + ds, "totalCount: " + totalCount, "level step: " + LEVEL_STEP, "s: "+s);
         return ds;
     }
 
     function getTimeoutNumber(){
-        //Depend on level
-        var successCount = getSuccessCount();
-        //console.log("getTimeoutNUmber success count", successCount);
-
         var t = 6000;
-        var s = parseInt(successCount/LEVEL_STEP) * 500;
+        var s = parseInt(totalCount/LEVEL_STEP) * 300;
         var ts = t -s ;
         ts = ts >= 500 ? ts : 500; //500 - 6000, step 500ms reduce each 100 point
 
