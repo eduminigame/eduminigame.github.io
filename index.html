@@ -266,6 +266,9 @@
     var LEVEL_STEP = 80; //points 
     function getDuration(){
         //Depend on level
+
+        successCount = getSuccessCount();
+        totalCount = successCount + successCountAdd;
         
         if(parseInt(totalCount/50) > 1){
             LEVEL_STEP=70
