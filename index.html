@@ -264,47 +264,36 @@
     var totalCount = successCount + successCountAdd;
 
     var LEVEL_STEP = 80; //points 
-    function getDuration(){
-        //Depend on level
-
+    var LEVEL = 0;
+    function getLevel(){
         successCount = getSuccessCount();
         totalCount = successCount + successCountAdd;
         
-        if(parseInt(totalCount/50) > 1){
-            LEVEL_STEP=70
-        }
-        if(parseInt(totalCount/50) > 2){
-            LEVEL_STEP=60
-        }
-        if(parseInt(totalCount/50) > 3){
-            LEVEL_STEP=50
-        }
-        if(parseInt(totalCount/50) > 4){
-            LEVEL_STEP=40
-        }
-        if(parseInt(totalCount/50) > 5){
-            LEVEL_STEP=35
-        }
-        if(parseInt(totalCount/50) > 6){
-            LEVEL_STEP=30
-        }
-        if(parseInt(totalCount/50) > 7){
-            LEVEL_STEP=25
-        }
-        if(parseInt(totalCount/50) > 8){
-            LEVEL_STEP=20
-        }
-
-        if(parseInt(totalCount/50) > 9){
-            LEVEL_STEP=15
-        }
-
-        if(parseInt(totalCount/50) > 10){
-            LEVEL_STEP=10
-        }
-
+        return parseInt(totalCount/50);
+    }
+    function getDuration(){
+        LEVEL = getLevel();
         
-        var s = parseInt(totalCount/LEVEL_STEP) * 300;
+        if(LEVEL > 1){
+            LEVEL_STEP = 70;
+        }
+        if(LEVEL > 2){
+            LEVEL_STEP = 60;
+        }
+        if(LEVEL > 3){
+            LEVEL_STEP = 50;
+        }
+        if(LEVEL > 4){
+            LEVEL_STEP = 45;
+        }
+        if(LEVEL > 5){
+            LEVEL_STEP = 40;
+        }
+        if(LEVEL > 6){
+            LEVEL_STEP = 30;
+        }
+        
+        var s = parseInt(totalCount/LEVEL_STEP) * 280;
         
         var d = 15000;
         var ds = d-s;
@@ -315,15 +304,19 @@
     }
 
     function getTimeoutNumber(){
+        var v = 300;
+        if(LEVEL > 5){
+            v = 250;
+        }
         var t = 6000;
-        var s = parseInt(totalCount/LEVEL_STEP) * 300;
+        var s = parseInt(totalCount/LEVEL_STEP) * v;
         var ts = t -s ;
         ts = ts >= 500 ? ts : 500; //500 - 6000, step 500ms reduce each 100 point
 
         return ts;
     }
     
-    const LIMIT_FAIL = 30;
+    const LIMIT_FAIL = 20;
 
     function onLimitFail(){
         $('.icon').show();
